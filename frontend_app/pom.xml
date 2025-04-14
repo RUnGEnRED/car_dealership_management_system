@@ -118,7 +118,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.project.frontend_app.frontend_app/com.project.frontend_app.frontend_app.FrontendAppApplication
+                                com.project.frontend_app.frontend_app/com.project.frontend_app.FrontendAppApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

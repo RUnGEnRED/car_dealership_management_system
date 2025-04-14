@@ -10,8 +10,16 @@ module com.project.frontend_app.frontend_app {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens com.project.frontend_app.frontend_app to javafx.fxml;
-    exports com.project.frontend_app.frontend_app;
-    exports com.project.frontend_app.frontend_app.controller;
-    opens com.project.frontend_app.frontend_app.controller to javafx.fxml;
+    opens com.project.frontend_app to javafx.fxml;
+    opens com.project.frontend_app.controller to javafx.fxml;
+    opens com.project.frontend_app.controller.customer to javafx.fxml;
+
+    opens com.project.frontend_app.model to javafx.base;
+    opens com.project.frontend_app.model.enums to javafx.base;
+
+    exports com.project.frontend_app;
+    exports com.project.frontend_app.controller;
+    exports com.project.frontend_app.controller.customer;
+    exports com.project.frontend_app.model;
+    exports com.project.frontend_app.model.enums;
 }
