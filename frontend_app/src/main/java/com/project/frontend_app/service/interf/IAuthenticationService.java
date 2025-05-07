@@ -1,6 +1,8 @@
 package com.project.frontend_app.service.interf;
 
 import com.project.frontend_app.model.Customer;
+import com.project.frontend_app.model.Employee;
+
 import java.util.Optional;
 
 
@@ -18,6 +20,6 @@ public interface IAuthenticationService {
      */
     Optional<Customer> authenticateCustomer(String email, String password);
 
-    // TODO: Add authentication methods for Employee
-    // Optional<Employee> authenticateEmployee(String username, String password); // Add later for Employees
+    Optional<Employee> authenticateEmployee(String email, String password);
+
 }

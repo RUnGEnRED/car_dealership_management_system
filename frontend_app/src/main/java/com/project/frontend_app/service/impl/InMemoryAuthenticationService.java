@@ -2,6 +2,7 @@ package com.project.frontend_app.service.impl;
 
 import com.project.frontend_app.model.Address;
 import com.project.frontend_app.model.Customer;
+import com.project.frontend_app.model.Employee;
 import com.project.frontend_app.service.interf.IAuthenticationService;
 
 import java.util.HashMap;
@@ -24,13 +25,20 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
     // TODO: CHANGE THIS TO USE A REAL AUTHENTICATION SERVICE AND CONNECT TO A REAL BACKEND
     // TODO: CHECK AND REFACTOR LOGIC TO REAL IMPLEMENTATION
 
-    // !! START TEST DATA FOR CUSTOMERS !!
+    // !! START TEST DATA FOR CUSTOMERS AND EMPLOYEE!!
     /**
      * In-memory storage for customer credentials.
      * Key: Lowercase email address
      * Value: Map containing Customer object and plain text password (for demo only)
      */
     private final Map<String, Map<String, Object>> customerCredentials = new HashMap<>();
+
+    /**
+     * In-memory storage for employee credentials.
+     * Key: Lowercase email address
+     * Value: Map containing Employee object and plain text password (for demo only)
+     */
+    private final Map<String, Map<String, Object>> employeeCredentials = new HashMap<>();
 
     /**
      * Constructor that initializes the service with test customers.
@@ -48,6 +56,12 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
         Customer customer3 = new Customer("Jan", "Nowak", "123123123", "qwe",
                 new Address("Nocna", "3", "5", "Warszawa", "00-001"));
         addTestCustomer(customer3, "qwe");
+
+        Employee emp1 = new Employee("Adam", "Nowicki", "111222333", "adam.n@example.com", "Sales");
+        addTestEmployee(emp1, "admin123");
+
+        Employee emp2 = new Employee("Ewa", "Lis", "444555666", "ewa.lis@example.com", "Mechanic");
+        addTestEmployee(emp2, "mechanic321");
     }
 
     /**
@@ -61,7 +75,14 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
         data.put("password", plainPassword); // Store plain password for demo only
         customerCredentials.put(customer.getEmail().toLowerCase(), data);
     }
-    // !! END TEST DATA FOR CUSTOMERS !!
+
+    private void addTestEmployee(Employee employee, String plainPassword) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("employee", employee);
+        data.put("password", plainPassword);
+        employeeCredentials.put(employee.getEmail().toLowerCase(), data);
+    }
+    // !! END TEST DATA FOR CUSTOMERS AND EMPLOYEE !!
 
     /**
      * Authenticates a customer based on the provided email and password.
@@ -94,5 +115,20 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
         return Optional.empty();
     }
 
-    // TODO: Implement authentication for employees
+    public Optional<Employee> authenticateEmployee(String email, String password) {
+        if (email == null || password == null) {
+            return Optional.empty();
+        }
+
+        Map<String, Object> storedData = employeeCredentials.get(email.toLowerCase());
+
+        if (storedData != null) {
+            String storedPassword = (String) storedData.get("password");
+            if (password.equals(storedPassword)) {
+                return Optional.ofNullable((Employee) storedData.get("employee"));
+            }
+        }
+
+        return Optional.empty();
+    }
 }

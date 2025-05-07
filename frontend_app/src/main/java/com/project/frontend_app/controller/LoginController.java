@@ -2,6 +2,8 @@ package com.project.frontend_app.controller;
 
 import com.project.frontend_app.controller.customer.CustomerDashboardController;
 import com.project.frontend_app.model.Customer;
+import com.project.frontend_app.controller.employee.EmployeeDashboardController;
+import com.project.frontend_app.model.Employee;
 import com.project.frontend_app.service.impl.InMemoryAuthenticationService; // Use implementation for now
 import com.project.frontend_app.service.interf.IAuthenticationService; // Use interface for now
 
@@ -18,6 +20,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
+
+
 
 
 /**
@@ -97,14 +101,22 @@ public class LoginController {
                 errorLabel.setText("Invalid email or password.");
                 passwordField.clear();
             }
-        } 
-        // Employee authentication flow (not yet implemented)
+        }
         else if ("Employee".equals(selectedType)) {
-            System.out.println("Attempting login as Employee (not implemented yet)");
-            errorLabel.setText("Employee login is not yet implemented.");
-            passwordField.clear();
+            Optional<Employee> authenticatedEmployee = authService.authenticateEmployee(email, password);
+
+            if (authenticatedEmployee.isPresent()) {
+                Employee employee = authenticatedEmployee.get();
+                System.out.println("Login successful for Employee: " + employee.getFirstName() + " " + employee.getLastName());
+                errorLabel.setText("");
+
+                openEmployeeDashboard(employee);
+                WindowHelper.closeWindow(loginButton);
+            } else {
+                errorLabel.setText("Invalid email or password.");
+                passwordField.clear();
+            }
         } else {
-            // Display error message for invalid role selection
             errorLabel.setText("Invalid role selected.");
         }
     }
@@ -143,4 +155,32 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the customer dashboard.");
         }
     }
+
+    private void openEmployeeDashboard(Employee employee) {
+        try {
+            URL fxmlLocation = getClass().getResource("/com/project/frontend_app/view/employee/employee-dashboard-view.fxml");
+
+            if (fxmlLocation == null) {
+                System.err.println("Cannot find FXML: employee-dashboard-view.fxml");
+                showAlert(Alert.AlertType.ERROR, "Error", "Could not load employee dashboard.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+            Parent root = loader.load();
+
+            EmployeeDashboardController controller = loader.getController();
+            controller.setLoggedInEmployee(employee);
+
+            Stage dashboardStage = new Stage();
+            dashboardStage.setTitle("Employee Dashboard - " + employee.getFirstName());
+            dashboardStage.setScene(new Scene(root));
+            dashboardStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the employee dashboard.");
+        }
+    }
+
 }

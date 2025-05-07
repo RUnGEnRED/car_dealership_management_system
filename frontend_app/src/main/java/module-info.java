@@ -13,6 +13,7 @@ module com.project.frontend_app.frontend_app {
     opens com.project.frontend_app to javafx.fxml;
     opens com.project.frontend_app.controller to javafx.fxml;
     opens com.project.frontend_app.controller.customer to javafx.fxml;
+    opens com.project.frontend_app.controller.employee to javafx.fxml;
 
     opens com.project.frontend_app.model to javafx.base;
     opens com.project.frontend_app.model.enums to javafx.base;
@@ -20,6 +21,7 @@ module com.project.frontend_app.frontend_app {
     exports com.project.frontend_app;
     exports com.project.frontend_app.controller;
     exports com.project.frontend_app.controller.customer;
+    exports com.project.frontend_app.controller.employee;
     exports com.project.frontend_app.model;
     exports com.project.frontend_app.model.enums;
 }
