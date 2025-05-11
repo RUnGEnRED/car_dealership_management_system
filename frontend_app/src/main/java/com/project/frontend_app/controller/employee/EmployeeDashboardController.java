@@ -1,6 +1,7 @@
 package com.project.frontend_app.controller.employee;
 
 import com.project.frontend_app.model.Employee;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -84,5 +85,63 @@ public class EmployeeDashboardController {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the vehicle list view.");
         }
+    }
+    /**
+     * Handles the "Logout" button action.
+     * Placeholder for future implementation.
+     */
+    @FXML
+    private void handleLogout() {
+        showAlert(Alert.AlertType.INFORMATION, "Logout", "Logging out... (Not implemented)");
+    }
+
+    /**
+     * Handles the "Purchase Requests" button action.
+     * Placeholder for future implementation.
+     */
+    @FXML
+    public void handlePurchaseRequests(ActionEvent actionEvent) {
+        showAlert(Alert.AlertType.INFORMATION, "Purchase Requests", "Purchase Requests... (Not implemented)");
+    }
+
+    /**
+     * Handles the "Service Requests" button action.
+     * Placeholder for future implementation.
+     */
+    @FXML
+    public void handleServiceRequests(ActionEvent actionEvent) {
+        showAlert(Alert.AlertType.INFORMATION, "Service Requests", "Service Requests... (Not implemented)");
+    }
+
+    /**
+     * Handles the "My Profile" button action.
+     */
+    @FXML
+    public void handleProfile(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/project/frontend_app/view/employee/employee-profile-view.fxml"));
+            Parent root = loader.load();
+
+            EmployeeProfileController controller = loader.getController();
+            controller.setLoggedInEmployee(loggedInEmployee);
+
+            Stage profileStage = new Stage();
+            profileStage.setTitle("My Profile");
+            profileStage.setScene(new Scene(root));
+            profileStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the employee profile view.");
+        }
+    }
+
+
+    /**
+     * Handles the "Customers Profiles" button action.
+     * Placeholder for future implementation.
+     */
+    @FXML
+    public void handleCustomersProfile(ActionEvent actionEvent) {
+        showAlert(Alert.AlertType.INFORMATION, "Customers Profiles", "Customers Profiles... (Not implemented)");
     }
 }

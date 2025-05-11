@@ -32,6 +32,11 @@
         <VBox spacing="15.0" BorderPane.alignment="CENTER_LEFT">
             <children>
                 <Button fx:id="manageVehiclesButton" maxWidth="180" mnemonicParsing="false" onAction="#handleManageVehicles" text="Manage Vehicles" /> <!-- Button to view vehicle list -->
+                <Button fx:id="PurchaseRequestsButton" maxWidth="180" mnemonicParsing="false" onAction="#handlePurchaseRequests" text="Purchase Requests" /> <!-- Button to view purchase requests list (not implemented)-->
+                <Button fx:id="ServiceRequestsButton" maxWidth="180" mnemonicParsing="false" onAction="#handleServiceRequests" text="Service Requests" /> <!-- Button to view service requests (not implemented) -->
+                <Button fx:id="CustomersProfilesButton" maxWidth="180" mnemonicParsing="false" onAction="#handleCustomersProfile" text="Customers Profiles" /> <!-- Button to view my profile (not implemented) -->
+                <Button fx:id="profileButton" maxWidth="180" mnemonicParsing="false" onAction="#handleProfile" text="My Profile" /> <!-- Button to view my profile (not implemented) -->
+                <Button fx:id="logoutButton" maxWidth="180" mnemonicParsing="false" onAction="#handleLogout" style="-fx-text-fill: red;" text="Logout" /> <!-- Button to logout (not implemented) -->
             </children>
             <BorderPane.margin>
                 <Insets left="20.0" top="20.0" bottom="20.0" right="20.0"/>

@@ -9,6 +9,7 @@ module com.project.frontend_app.frontend_app {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.desktop;
 
     opens com.project.frontend_app to javafx.fxml;
     opens com.project.frontend_app.controller to javafx.fxml;
