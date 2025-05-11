@@ -25,6 +25,10 @@ public interface IVehicleService {
      */
     Optional<Vehicle> findByVin(String vin);
 
+    void save(Vehicle newVehicle);
+
+    void delete(String vin);
+
     // TODO: Add vehicle management methods for Employee/Admin roles
     // Vehicle saveVehicle(Vehicle vehicle); // Add later for Employees/Admins
     // Vehicle updateVehicle(Vehicle vehicle); // Add later for Employees/Admins

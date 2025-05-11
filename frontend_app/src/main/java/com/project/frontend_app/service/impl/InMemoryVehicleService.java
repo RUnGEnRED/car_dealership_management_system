@@ -81,5 +81,24 @@ public class InMemoryVehicleService implements IVehicleService {
         return Optional.ofNullable(vehicles.get(vin));
     }
 
-    // TODO: Implement save, update, delete methods as needed
+    @Override
+    public void save(Vehicle newVehicle) {
+        if (newVehicle != null && newVehicle.getVin() != null && !newVehicle.getVin().isEmpty()) {
+            vehicles.put(newVehicle.getVin(), newVehicle);
+            System.out.println("Saved vehicle: " + newVehicle.getVin());
+        } else {
+            System.out.println("Invalid vehicle input. Save failed.");
+        }
+    }
+
+    @Override
+    public void delete(String vin) {
+        if (vin != null && vehicles.containsKey(vin)) {
+            vehicles.remove(vin);
+            System.out.println("Deleted vehicle: " + vin);
+        } else {
+            System.out.println("Vehicle not found or VIN is null. Delete failed.");
+        }
+    }
+
 }

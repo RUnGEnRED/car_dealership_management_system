@@ -11,6 +11,7 @@
   Controller: com.project.frontend_app.controller.employee.EmployeeDashboardController
 -->
 
+<?import javafx.scene.control.Button?>
 <BorderPane prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -27,7 +28,19 @@
             </BorderPane.margin>
         </Label>
     </top>
-
+    <left>
+        <VBox spacing="15.0" BorderPane.alignment="CENTER_LEFT">
+            <children>
+                <Button fx:id="manageVehiclesButton" maxWidth="180" mnemonicParsing="false" onAction="#handleManageVehicles" text="Manage Vehicles" /> <!-- Button to view vehicle list -->
+            </children>
+            <BorderPane.margin>
+                <Insets left="20.0" top="20.0" bottom="20.0" right="20.0"/>
+            </BorderPane.margin>
+            <padding>
+                <Insets top="10.0" bottom="10.0" />
+            </padding>
+        </VBox>
+    </left>
     <!-- Content area -->
     <center>
         <VBox alignment="CENTER" BorderPane.alignment="CENTER">
