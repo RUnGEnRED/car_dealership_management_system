@@ -6,6 +6,7 @@ import com.project.frontend_app.model.Employee;
 import com.project.frontend_app.service.interf.IAuthenticationService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
                 new Address("Leśna", "5", "2", "Kraków", "30-002"));
         addTestCustomer(customer2, "qwerty");
 
-        Customer customer3 = new Customer("Jan", "Nowak", "123123123", "qwe",
+        Customer customer3 = new Customer("Jan", "Nowak", "123123123", "jan.n@example.com",
                 new Address("Nocna", "3", "5", "Warszawa", "00-001"));
         addTestCustomer(customer3, "qwe");
 
@@ -69,7 +70,7 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
      * @param customer The customer to add
      * @param plainPassword The plain text password (for demo only - insecure)
      */
-    private void addTestCustomer(Customer customer, String plainPassword) {
+    void addTestCustomer(Customer customer, String plainPassword) {
         Map<String, Object> data = new HashMap<>();
         data.put("customer", customer);
         data.put("password", plainPassword); // Store plain password for demo only
@@ -130,5 +131,19 @@ public class InMemoryAuthenticationService implements IAuthenticationService {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Returns a list of all customers stored in memory.
+     * The method converts the data in memory (customerCredentials) into a stream,
+     * extracts the Customer objects, and returns them as a list.
+     *
+     * @return A list of all customers.
+     */
+    @Override
+    public List<Customer> findAll() {
+        return customerCredentials.values().stream()
+                .map(data -> (Customer) data.get("customer"))
+                .toList();
     }
 }

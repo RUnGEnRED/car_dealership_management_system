@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import static com.project.frontend_app.util.AlertHelper.showAlert;
+
 /**
  * Controller for vehicle management: viewing, adding, updating, and deleting vehicles.
  */
@@ -111,7 +113,7 @@ public class ManageVehilcesController {
             loadVehicleData();
             clearFormFields();
         } catch (Exception e) {
-            showAlert("Error", "Invalid input. Please check all fields.");
+            showAlert(Alert.AlertType.ERROR, "Invalid input", "Please check all fields.");
         }
     }
 
@@ -126,7 +128,7 @@ public class ManageVehilcesController {
             loadVehicleData();
             clearFormFields();
         } else {
-            showAlert("No selection", "Please select a vehicle to delete.");
+            showAlert(Alert.AlertType.ERROR, "No selection", "Please select a vehicle to delete.");
         }
     }
 
@@ -173,16 +175,4 @@ public class ManageVehilcesController {
         vehicleTable.getSelectionModel().clearSelection();
     }
 
-    /**
-     * Displays an alert dialog with provided title and content.
-     * @param title the title of the alert
-     * @param content the content/message of the alert
-     */
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 }

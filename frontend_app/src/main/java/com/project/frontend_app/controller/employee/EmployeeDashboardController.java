@@ -132,11 +132,32 @@ public class EmployeeDashboardController {
 
     /**
      * Handles the "Customers Profiles" button action.
-     * Placeholder for future implementation.
      */
     @FXML
     public void handleCustomersProfile(ActionEvent actionEvent) {
-        showAlert(Alert.AlertType.INFORMATION, "Customers Profiles", "Customers Profiles... (Not implemented)");
+        try {
+            // Load the FXML file for the customers list
+            URL fxmlLocation = getClass().getResource("/com/project/frontend_app/view/employee/customer-list-view.fxml");
+
+            if (fxmlLocation == null) {
+                System.err.println("Cannot find FXML: customer-list-view.fxml");
+                showAlert(Alert.AlertType.ERROR, "Error", "Could not load customers list view.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+            Parent root = loader.load();
+
+            // Create a new stage (window) for the vehicle list
+            Stage vehicleListStage = new Stage();
+            vehicleListStage.setTitle("Customers");
+            vehicleListStage.setScene(new Scene(root));
+            vehicleListStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the customers list view.");
+        }
     }
 
     /**

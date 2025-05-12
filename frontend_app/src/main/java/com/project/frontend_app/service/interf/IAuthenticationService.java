@@ -3,6 +3,7 @@ package com.project.frontend_app.service.interf;
 import com.project.frontend_app.model.Customer;
 import com.project.frontend_app.model.Employee;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,4 +23,5 @@ public interface IAuthenticationService {
 
     Optional<Employee> authenticateEmployee(String email, String password);
 
+    List<Customer> findAll();
 }
