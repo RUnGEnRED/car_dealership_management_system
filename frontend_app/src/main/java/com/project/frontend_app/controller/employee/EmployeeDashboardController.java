@@ -1,12 +1,14 @@
 package com.project.frontend_app.controller.employee;
 
 import com.project.frontend_app.model.Employee;
+import com.project.frontend_app.util.WindowHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
@@ -21,8 +23,8 @@ import static com.project.frontend_app.util.AlertHelper.showAlert;
  */
 public class EmployeeDashboardController {
 
-    @FXML
-    private Label welcomeLabel;
+    @FXML private Label welcomeLabel;
+    @FXML private Button logoutButton;
 
     /** Currently logged-in employee */
     private Employee loggedInEmployee;
@@ -86,14 +88,6 @@ public class EmployeeDashboardController {
             showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the vehicle list view.");
         }
     }
-    /**
-     * Handles the "Logout" button action.
-     * Placeholder for future implementation.
-     */
-    @FXML
-    private void handleLogout() {
-        showAlert(Alert.AlertType.INFORMATION, "Logout", "Logging out... (Not implemented)");
-    }
 
     /**
      * Handles the "Purchase Requests" button action.
@@ -143,5 +137,14 @@ public class EmployeeDashboardController {
     @FXML
     public void handleCustomersProfile(ActionEvent actionEvent) {
         showAlert(Alert.AlertType.INFORMATION, "Customers Profiles", "Customers Profiles... (Not implemented)");
+    }
+
+    /**
+     * Handles the "Logout" button action.
+     */
+    @FXML
+    private void handleLogout() {
+        WindowHelper.openLoginWindow();
+        WindowHelper.closeWindow(logoutButton);
     }
 }

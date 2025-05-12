@@ -5,6 +5,7 @@ import com.project.frontend_app.model.Customer;
 
 import static com.project.frontend_app.util.AlertHelper.showAlert;
 
+import com.project.frontend_app.util.WindowHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -172,10 +173,10 @@ public class CustomerDashboardController {
 
     /**
      * Handles the "Logout" button action.
-     * Placeholder for future implementation.
      */
     @FXML
     private void handleLogout() {
-        showAlert(Alert.AlertType.INFORMATION, "Logout", "Logging out... (Not implemented)");
+        WindowHelper.openLoginWindow();
+        WindowHelper.closeWindow(logoutButton);
     }
 }

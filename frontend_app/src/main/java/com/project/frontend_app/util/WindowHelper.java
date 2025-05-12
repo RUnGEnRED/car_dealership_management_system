@@ -1,9 +1,14 @@
 package com.project.frontend_app.util;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import java.io.IOException;
 
 
 /**
@@ -36,6 +41,26 @@ public final class WindowHelper {
             ((Stage) window).close();
         } else {
             System.err.println("WindowHelper Warning: The window containing the node is not a Stage. Cannot close.");
+        }
+    }
+
+
+    public static void openLoginWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(WindowHelper.class.getResource("/com/project/frontend_app/view/login-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Login");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to open login window");
+            alert.setContentText("Could not load login-view.fxml");
+            alert.showAndWait();
         }
     }
 }

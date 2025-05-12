@@ -10,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+import static com.project.frontend_app.util.AlertHelper.showAlert;
+
 /**
  * Controller for the profile page in the employee interface.
  * Manages employee personal information and update contact info.
@@ -78,20 +80,10 @@ public class EmployeeProfileController {
         newEmailField.clear();
         newPhoneField.clear();
 
-        // Show a confirmation alert if there was an update
         if (updated) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Update Successful");
-            alert.setHeaderText(null);
-            alert.setContentText("Your contact information has been updated successfully.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.INFORMATION, "Update Successful", "Your contact information has been updated successfully.");
         } else {
-            // If no update was made, show an info alert
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("No Changes Made");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter new information to update.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "No Changes Made", "Please enter new information to update.");
         }
     }
 
