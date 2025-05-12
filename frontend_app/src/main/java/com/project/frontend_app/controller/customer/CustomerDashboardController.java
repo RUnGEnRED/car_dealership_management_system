@@ -1,9 +1,11 @@
 package com.project.frontend_app.controller.customer;
 
+import com.project.frontend_app.controller.employee.EmployeeProfileController;
 import com.project.frontend_app.model.Customer;
 
 import static com.project.frontend_app.util.AlertHelper.showAlert;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -147,12 +149,25 @@ public class CustomerDashboardController {
     }
 
     /**
-     * Handles the "Profile" button action.
-     * Placeholder for future implementation.
+     * Handles the "My Profile" button action.
      */
     @FXML
-    private void handleProfile() {
-        showAlert(Alert.AlertType.INFORMATION, "Navigation", "Navigating to Profile... (Not implemented)");
+    public void handleProfile(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/project/frontend_app/view/customer/customer-profile-view.fxml"));
+            Parent root = loader.load();
+
+            CustomerProfileController controller = loader.getController();
+            controller.setLoggedInCustomer(loggedInCustomer);
+
+            Stage profileStage = new Stage();
+            profileStage.setTitle("My Profile");
+            profileStage.setScene(new Scene(root));
+            profileStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Loading Error", "Failed to load the customer profile view.");
+        }
     }
 
     /**
