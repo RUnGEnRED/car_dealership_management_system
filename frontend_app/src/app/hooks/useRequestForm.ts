@@ -1,12 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Car } from '../types/car';
-import { ServiceRequestPayload, InspectionRequestPayload, RequestResponse } from '../types/request';
+import {
+  Car,
+} from '../types/car'; 
+import {
+  ServiceRequestPayload,
+  InspectionRequestPayload,
+  PurchaseRequestPayload, 
+  RequestCreationResponse, 
+} from '../types/request';
 
 /**
- * This hook manages the logic for handling car service and inspection request forms.
- * It handles fetching the user's cars, managing form input, submitting requests to the API,
- * and displaying success or error messages, including a success pop-up.
+ * Custom hook to manage request forms for service, inspection, and purchase requests.
+ * It handles fetching user's cars, managing form state, and submitting requests.
  */
 
 interface UseRequestFormsResult {
@@ -18,17 +24,19 @@ interface UseRequestFormsResult {
   formLoading: boolean;
   formError: string | null;
   formSuccess: string | null;
-  showSuccessPopup: boolean; 
+  showSuccessPopup: boolean;
   setSelectedVehicleId: (id: string | number | '') => void;
   setCustomerNotes: (notes: string) => void;
   submitServiceRequest: () => Promise<void>;
   submitInspectionRequest: () => Promise<void>;
+  submitPurchaseRequest: () => Promise<void>;
   resetRequestForm: () => void;
-  closeSuccessPopup: () => void; 
+  closeSuccessPopup: () => void;
 }
 
 const SERVICE_REQUEST_URL = 'http://localhost:3001/api/requests/service';
 const INSPECTION_REQUEST_URL = 'http://localhost:3001/api/requests/inspection';
+const PURCHASE_REQUEST_URL = 'http://localhost:3001/api/requests/purchase';
 const MY_CARS_URL = 'http://localhost:3001/api/customers/me/vehicles';
 
 export const useRequestForms = (): UseRequestFormsResult => {
@@ -70,7 +78,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
   const closeSuccessPopup = useCallback(() => {
     setShowSuccessPopup(false);
     setFormSuccess(null);
-    resetRequestForm(); 
+    resetRequestForm();
   }, [resetRequestForm]);
 
   useEffect(() => {
@@ -81,7 +89,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
         const response = await axios.get<Car[]>(MY_CARS_URL, getAuthHeaders());
         setMyCars(response.data);
         if (response.data.length > 0) {
-          setSelectedVehicleId(response.data[0].id); 
+          setSelectedVehicleId(response.data[0].id);
         }
       } catch (err: any) {
         if (axios.isAxiosError(err) && err.response && err.response.status === 401) {
@@ -101,7 +109,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
   const submitServiceRequest = async () => {
     setFormLoading(true);
     setFormError(null);
-    setFormSuccess(null); 
+    setFormSuccess(null);
 
     if (!selectedVehicleId) {
       setFormError('Please select a car.');
@@ -114,9 +122,9 @@ export const useRequestForms = (): UseRequestFormsResult => {
         vehicleId: selectedVehicleId,
         customerNotes: customerNotes,
       };
-      const response = await axios.post<RequestResponse>(SERVICE_REQUEST_URL, payload, getAuthHeaders());
+      const response = await axios.post<RequestCreationResponse>(SERVICE_REQUEST_URL, payload, getAuthHeaders());
       setFormSuccess(response.data.message || 'Service request submitted successfully!');
-      setShowSuccessPopup(true); 
+      setShowSuccessPopup(true);
     } catch (err: any) {
       if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
         setFormError(err.response.data.message);
@@ -132,7 +140,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
   const submitInspectionRequest = async () => {
     setFormLoading(true);
     setFormError(null);
-    setFormSuccess(null); 
+    setFormSuccess(null);
 
     if (!selectedVehicleId) {
       setFormError('Please select a car.');
@@ -145,9 +153,9 @@ export const useRequestForms = (): UseRequestFormsResult => {
         vehicleId: selectedVehicleId,
         customerNotes: customerNotes,
       };
-      const response = await axios.post<RequestResponse>(INSPECTION_REQUEST_URL, payload, getAuthHeaders());
+      const response = await axios.post<RequestCreationResponse>(INSPECTION_REQUEST_URL, payload, getAuthHeaders());
       setFormSuccess(response.data.message || 'Inspection request submitted successfully!');
-      setShowSuccessPopup(true); 
+      setShowSuccessPopup(true);
     } catch (err: any) {
       if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
         setFormError(err.response.data.message);
@@ -155,6 +163,37 @@ export const useRequestForms = (): UseRequestFormsResult => {
         setFormError(err.message || 'Failed to submit inspection request.');
       }
       console.error('Inspection request error:', err);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const submitPurchaseRequest = async () => {
+    setFormLoading(true);
+    setFormError(null);
+    setFormSuccess(null);
+
+    if (!selectedVehicleId) {
+      setFormError('Please select a car for purchase.');
+      setFormLoading(false);
+      return;
+    }
+
+    try {
+      const payload: PurchaseRequestPayload = {
+        vehicleId: selectedVehicleId,
+        customerNotes: customerNotes,
+      };
+      const response = await axios.post<RequestCreationResponse>(PURCHASE_REQUEST_URL, payload, getAuthHeaders());
+      setFormSuccess(response.data.message || 'Purchase request submitted successfully!');
+      setShowSuccessPopup(true);
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+        setFormError(err.response.data.message);
+      } else {
+        setFormError(err.message || 'Failed to submit purchase request.');
+      }
+      console.error('Purchase request error:', err);
     } finally {
       setFormLoading(false);
     }
@@ -169,12 +208,13 @@ export const useRequestForms = (): UseRequestFormsResult => {
     formLoading,
     formError,
     formSuccess,
-    showSuccessPopup, 
+    showSuccessPopup,
     setSelectedVehicleId,
     setCustomerNotes,
     submitServiceRequest,
     submitInspectionRequest,
+    submitPurchaseRequest,
     resetRequestForm,
-    closeSuccessPopup, 
+    closeSuccessPopup,
   };
 };

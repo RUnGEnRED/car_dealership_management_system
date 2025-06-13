@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { CustomerProfile, CustomerProfileUpdate } from '../types/customer'; 
+import { CustomerProfile, CustomerProfileFormData, CustomerProfileUpdate } from '../types/customer'; 
+
 /**
- * This hook manages fetching, displaying, and editing customer profile data.
- * It allows switching between view and edit modes,
- * handles form changes, and sends updated data to the API.
+ * Custom hook to manage customer profile data.
+ * It handles fetching, updating, and editing the customer's profile.
  */
 
 interface UseCustomerProfileResult {
@@ -12,15 +12,14 @@ interface UseCustomerProfileResult {
   loading: boolean;
   error: string | null;
   editMode: boolean;
-  formData: CustomerProfileUpdate;
+  formData: CustomerProfileFormData;
   saveLoading: boolean;
   saveError: string | null;
   setEditMode: (mode: boolean) => void;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; 
   handleAddressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (e: React.FormEvent) => Promise<void>;
-  resetForm: () => void; 
-  fetchProfile: () => Promise<void>; 
+  handleSubmit: (e: React.FormEvent) => void;
+  resetForm: () => void;
 }
 
 const CUSTOMER_PROFILE_URL = 'http://localhost:3001/api/customers/me';
@@ -29,32 +28,36 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [formData, setFormData] = useState<CustomerProfileUpdate>({
+  const [formData, setFormData] = useState<CustomerProfileFormData>({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
-    address: { street: '', city: '', postalCode: '', country: '' },
+    address: {
+      street: '',
+      city: '',
+      postalCode: '',
+      country: '',
+    },
   });
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const getAuthHeaders = () => {
+  const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
       setError('Authentication token not found. Please log in again.');
-      return {}; 
+      return {};
     }
     return {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-  };
+  }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -65,7 +68,12 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
         lastName: response.data.lastName,
         email: response.data.email,
         phoneNumber: response.data.phoneNumber,
-        address: response.data.address,
+        address: {
+          street: response.data.address.street || '',
+          city: response.data.address.city || '',
+          postalCode: response.data.address.postalCode || '',
+          country: response.data.address.country || '',
+        },
       });
     } catch (err: any) {
       if (axios.isAxiosError(err) && err.response && err.response.status === 401) {
@@ -77,59 +85,84 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
 
   useEffect(() => {
     fetchProfile();
-  }, []); 
+  }, [fetchProfile]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { 
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }, []);
 
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
+    setFormData((prevData) => ({
+      ...prevData,
       address: {
-        ...prev.address,
+        ...prevData.address,
         [name]: value,
       },
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaveLoading(true);
-    setSaveError(null);
-    try {
-      await axios.put(CUSTOMER_PROFILE_URL, formData, getAuthHeaders());
-      await fetchProfile();
-      setEditMode(false); 
-    } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
-        setSaveError(err.response.data.message);
-      } else {
-        setSaveError(err.message || 'Failed to update profile.');
-      }
-      console.error('Update profile error:', err);
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     if (profile) {
       setFormData({
         firstName: profile.firstName,
         lastName: profile.lastName,
         email: profile.email,
         phoneNumber: profile.phoneNumber,
-        address: profile.address,
+        address: {
+          street: profile.address.street || '',
+          city: profile.address.city || '',
+          postalCode: profile.address.postalCode || '',
+          country: profile.address.country || '',
+        },
       });
     }
-  };
+    setSaveError(null);
+  }, [profile]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setSaveLoading(true);
+      setSaveError(null);
+
+      try {
+        const payload: CustomerProfileUpdate = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          address: {
+            street: formData.address.street,
+            city: formData.address.city,
+            postalCode: formData.address.postalCode,
+            country: formData.address.country,
+          },
+        };
+        await axios.put(CUSTOMER_PROFILE_URL, payload, getAuthHeaders());
+        setSaveLoading(false);
+        setEditMode(false);
+        fetchProfile(); 
+      } catch (err: any) {
+        if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+          setSaveError(err.response.data.message);
+        } else {
+          setSaveError(err.message || 'Failed to save profile changes.');
+        }
+        console.error('Save profile error:', err);
+        setSaveLoading(false);
+      }
+    },
+    [formData, getAuthHeaders, fetchProfile]
+  );
 
   return {
     profile,
@@ -144,6 +177,5 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
     handleAddressChange,
     handleSubmit,
     resetForm,
-    fetchProfile,
   };
 };
