@@ -1,60 +1,42 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import {
-  Car,
-} from '../types/car'; 
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { Car } from "../../types/car";
 import {
   ServiceRequestPayload,
   InspectionRequestPayload,
-  PurchaseRequestPayload, 
-  RequestCreationResponse, 
-} from '../types/request';
+  PurchaseRequestPayload,
+  RequestCreationResponse,
+  UseRequestFormsResult,
+} from "../../types/request";
 
 /**
  * Custom hook to manage request forms for service, inspection, and purchase requests.
  * It handles fetching user's cars, managing form state, and submitting requests.
  */
 
-interface UseRequestFormsResult {
-  myCars: Car[];
-  myCarsLoading: boolean;
-  myCarsError: string | null;
-  selectedVehicleId: string | number | '';
-  customerNotes: string;
-  formLoading: boolean;
-  formError: string | null;
-  formSuccess: string | null;
-  showSuccessPopup: boolean;
-  setSelectedVehicleId: (id: string | number | '') => void;
-  setCustomerNotes: (notes: string) => void;
-  submitServiceRequest: () => Promise<void>;
-  submitInspectionRequest: () => Promise<void>;
-  submitPurchaseRequest: () => Promise<void>;
-  resetRequestForm: () => void;
-  closeSuccessPopup: () => void;
-}
-
-const SERVICE_REQUEST_URL = 'http://localhost:3001/api/requests/service';
-const INSPECTION_REQUEST_URL = 'http://localhost:3001/api/requests/inspection';
-const PURCHASE_REQUEST_URL = 'http://localhost:3001/api/requests/purchase';
-const MY_CARS_URL = 'http://localhost:3001/api/customers/me/vehicles';
+const SERVICE_REQUEST_URL = "http://localhost:3001/api/requests/service";
+const INSPECTION_REQUEST_URL = "http://localhost:3001/api/requests/inspection";
+const PURCHASE_REQUEST_URL = "http://localhost:3001/api/requests/purchase";
+const MY_CARS_URL = "http://localhost:3001/api/customers/me/vehicles";
 
 export const useRequestForms = (): UseRequestFormsResult => {
   const [myCars, setMyCars] = useState<Car[]>([]);
   const [myCarsLoading, setMyCarsLoading] = useState<boolean>(true);
   const [myCarsError, setMyCarsError] = useState<string | null>(null);
 
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | number | ''>('');
-  const [customerNotes, setCustomerNotes] = useState<string>('');
+  const [selectedVehicleId, setSelectedVehicleId] = useState<
+    string | number | ""
+  >("");
+  const [customerNotes, setCustomerNotes] = useState<string>("");
   const [formLoading, setFormLoading] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
 
   const getAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem('jwt_token');
+    const token = localStorage.getItem("jwt_token");
     if (!token) {
-      setFormError('Authentication token not found. Please log in again.');
+      setFormError("Authentication token not found. Please log in again.");
       return {};
     }
     return {
@@ -65,13 +47,13 @@ export const useRequestForms = (): UseRequestFormsResult => {
   }, []);
 
   const resetRequestForm = useCallback(() => {
-    setCustomerNotes('');
+    setCustomerNotes("");
     setFormError(null);
     setFormSuccess(null);
     if (myCars.length > 0) {
       setSelectedVehicleId(myCars[0].id);
     } else {
-      setSelectedVehicleId('');
+      setSelectedVehicleId("");
     }
   }, [myCars]);
 
@@ -92,12 +74,18 @@ export const useRequestForms = (): UseRequestFormsResult => {
           setSelectedVehicleId(response.data[0].id);
         }
       } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response && err.response.status === 401) {
-          setMyCarsError('Unauthorized. Please log in again to see your cars.');
+        if (
+          axios.isAxiosError(err) &&
+          err.response &&
+          err.response.status === 401
+        ) {
+          setMyCarsError("Unauthorized. Please log in again to see your cars.");
         } else {
-          setMyCarsError(err.message || 'Failed to fetch your cars for the form.');
+          setMyCarsError(
+            err.message || "Failed to fetch your cars for the form."
+          );
         }
-        console.error('Fetch user cars for form error:', err);
+        console.error("Fetch user cars for form error:", err);
       } finally {
         setMyCarsLoading(false);
       }
@@ -112,7 +100,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
     setFormSuccess(null);
 
     if (!selectedVehicleId) {
-      setFormError('Please select a car.');
+      setFormError("Please select a car.");
       setFormLoading(false);
       return;
     }
@@ -122,16 +110,27 @@ export const useRequestForms = (): UseRequestFormsResult => {
         vehicleId: selectedVehicleId,
         customerNotes: customerNotes,
       };
-      const response = await axios.post<RequestCreationResponse>(SERVICE_REQUEST_URL, payload, getAuthHeaders());
-      setFormSuccess(response.data.message || 'Service request submitted successfully!');
+      const response = await axios.post<RequestCreationResponse>(
+        SERVICE_REQUEST_URL,
+        payload,
+        getAuthHeaders()
+      );
+      setFormSuccess(
+        response.data.message || "Service request submitted successfully!"
+      );
       setShowSuccessPopup(true);
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
         setFormError(err.response.data.message);
       } else {
-        setFormError(err.message || 'Failed to submit service request.');
+        setFormError(err.message || "Failed to submit service request.");
       }
-      console.error('Service request error:', err);
+      console.error("Service request error:", err);
     } finally {
       setFormLoading(false);
     }
@@ -143,7 +142,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
     setFormSuccess(null);
 
     if (!selectedVehicleId) {
-      setFormError('Please select a car.');
+      setFormError("Please select a car.");
       setFormLoading(false);
       return;
     }
@@ -153,16 +152,27 @@ export const useRequestForms = (): UseRequestFormsResult => {
         vehicleId: selectedVehicleId,
         customerNotes: customerNotes,
       };
-      const response = await axios.post<RequestCreationResponse>(INSPECTION_REQUEST_URL, payload, getAuthHeaders());
-      setFormSuccess(response.data.message || 'Inspection request submitted successfully!');
+      const response = await axios.post<RequestCreationResponse>(
+        INSPECTION_REQUEST_URL,
+        payload,
+        getAuthHeaders()
+      );
+      setFormSuccess(
+        response.data.message || "Inspection request submitted successfully!"
+      );
       setShowSuccessPopup(true);
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
         setFormError(err.response.data.message);
       } else {
-        setFormError(err.message || 'Failed to submit inspection request.');
+        setFormError(err.message || "Failed to submit inspection request.");
       }
-      console.error('Inspection request error:', err);
+      console.error("Inspection request error:", err);
     } finally {
       setFormLoading(false);
     }
@@ -174,7 +184,7 @@ export const useRequestForms = (): UseRequestFormsResult => {
     setFormSuccess(null);
 
     if (!selectedVehicleId) {
-      setFormError('Please select a car for purchase.');
+      setFormError("Please select a car for purchase.");
       setFormLoading(false);
       return;
     }
@@ -184,16 +194,27 @@ export const useRequestForms = (): UseRequestFormsResult => {
         vehicleId: selectedVehicleId,
         customerNotes: customerNotes,
       };
-      const response = await axios.post<RequestCreationResponse>(PURCHASE_REQUEST_URL, payload, getAuthHeaders());
-      setFormSuccess(response.data.message || 'Purchase request submitted successfully!');
+      const response = await axios.post<RequestCreationResponse>(
+        PURCHASE_REQUEST_URL,
+        payload,
+        getAuthHeaders()
+      );
+      setFormSuccess(
+        response.data.message || "Purchase request submitted successfully!"
+      );
       setShowSuccessPopup(true);
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+      if (
+        axios.isAxiosError(err) &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
         setFormError(err.response.data.message);
       } else {
-        setFormError(err.message || 'Failed to submit purchase request.');
+        setFormError(err.message || "Failed to submit purchase request.");
       }
-      console.error('Purchase request error:', err);
+      console.error("Purchase request error:", err);
     } finally {
       setFormLoading(false);
     }

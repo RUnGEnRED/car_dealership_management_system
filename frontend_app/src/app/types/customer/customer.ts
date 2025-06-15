@@ -31,3 +31,18 @@ export interface CustomerProfileFormData {
     country: string;
   };
 }
+
+export interface MyProfileSectionProps {
+  profile: CustomerProfile | null;
+  loading: boolean;
+  error: string | null;
+  editMode: boolean;
+  formData: CustomerProfileFormData;
+  saveLoading: boolean;
+  saveError: string | null;
+  setEditMode: (mode: boolean) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleAddressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  resetForm: () => void;
+}

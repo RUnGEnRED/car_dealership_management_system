@@ -3,7 +3,7 @@
 Car dealership management system application.
 
 **Backend**: Spring Boot (Java) with PostgreSQL
-**Frontend**: JavaFX (Java)
+**Frontend**: Next.js (React)
 
 This application provides a platform for managing the operations of a car dealership, including vehicle inventory, sales tracking, and potentially customer information.
 
@@ -16,6 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 * Java JDK 21+
 * Apache Maven 3.8+
 * PostgreSQL 17+
+* Next.js 17+ and npm/yarn
 * [Git](https://git-scm.com/)
 
 ### Installation
@@ -38,7 +39,7 @@ These instructions will get you a copy of the project up and running on your loc
     
     # Build frontend 
     cd ../frontend_app
-    mvn clean install
+    npm install
     ```
 
 ### Running the Application
@@ -55,13 +56,13 @@ You need to run both the backend and frontend applications simultaneously.
 2. **Start Frontend**:
     ```bash
     # In the frontend_app directory
-    mvn javafx:run
+    npm run dev
     ```
     The frontend application should now be running and accessible.
 
 ## Usage
 
-1.  Open your web browser and navigate to `http://localhost:3001` (or the port your backend is running on) for API access.
+1.  Open your web browser and navigate to `http://localhost:3000` (or the port your backend is running on) for API access.
 2.  Run the frontend application for the GUI.
 3.  Navigate through the application sections.
 

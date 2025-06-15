@@ -1,3 +1,5 @@
+import { Car } from '../types/car';
+
 /**
  * Defines the possible types of requests a customer can make.
  */
@@ -50,12 +52,61 @@ export interface DetailedRequest {
   customerId: number;
   customerUsername: string;
   vehicleId: number;
-  vehicleVin?: string; // Optional, as VIN might not always be immediately available or relevant for all request types
-  assignedEmployeeId: number | null; // Can be null if not yet assigned to an employee
-  assignedEmployeeUsername: string | null; // Can be null if not yet assigned
+  vehicleVin?: string; 
+  assignedEmployeeId: number | null; 
+  assignedEmployeeUsername: string | null; 
   requestType: RequestType;
   status: RequestStatus;
   customerNotes: string;
-  createdAt: string; // ISO 8601 date string
-  updatedAt: string; // ISO 8601 date string
+  createdAt: string; 
+  updatedAt: string; 
 }
+/**
+ * Defines the props for the NewRequestSection component.
+ * It specifies the active form type, functions to set active form and section,
+ * and a function to close the success popup.
+ */
+
+export interface NewRequestSectionProps {
+  activeRequestForm: 'none' | 'service' | 'inspection' | 'purchase';
+  setActiveRequestForm: (form: 'none' | 'service' | 'inspection' | 'purchase') => void;
+  closeSuccessPopup: () => void;
+  setActiveSection: (section: string) => void; 
+}
+
+/**
+ * Defines the return type for the useMyRequests hook.
+ * It provides the list of requests made by the user, loading status, error messages,
+ * and a function to manually refetch the requests.
+ */
+export interface UseMyRequestsResult {
+  myRequests: DetailedRequest[];
+  loading: boolean;
+  error: string | null;
+  fetchMyRequests: () => Promise<void>;
+}
+
+/**
+ * Defines the return type for the useRequestForms hook.
+ * It encapsulates states and functions related to submitting various customer requests
+ * (service, inspection, purchase), including car selection, notes, and form submission status.
+ */
+export interface UseRequestFormsResult {
+  myCars: Car[];
+  myCarsLoading: boolean;
+  myCarsError: string | null;
+  selectedVehicleId: string | number | '';
+  customerNotes: string;
+  formLoading: boolean;
+  formError: string | null;
+  formSuccess: string | null;
+  showSuccessPopup: boolean;
+  setSelectedVehicleId: (id: string | number | '') => void;
+  setCustomerNotes: (notes: string) => void;
+  submitServiceRequest: () => Promise<void>;
+  submitInspectionRequest: () => Promise<void>;
+  submitPurchaseRequest: () => Promise<void>;
+  resetRequestForm: () => void;
+  closeSuccessPopup: () => void;
+}
+

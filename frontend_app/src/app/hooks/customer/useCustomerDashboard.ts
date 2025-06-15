@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Car } from '../types/car'; 
+import { useState, useEffect } from "react";
+import { Car } from "../../types/car";
+import { UseCustomerDashboardResult } from "../../types/newRequestSection";
 
 /**
  * This hook manages fetching and filtering car data for the customer dashboard.
@@ -7,19 +8,12 @@ import { Car } from '../types/car';
  * to show only those currently available.
  */
 
-interface UseCustomerDashboardResult {
-  cars: Car[];
-  loading: boolean;
-  error: string | null;
-  filterAvailableOnly: boolean;
-  setFilterAvailableOnly: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 export const useCustomerDashboard = (): UseCustomerDashboardResult => {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterAvailableOnly, setFilterAvailableOnly] = useState<boolean>(false);
+  const [filterAvailableOnly, setFilterAvailableOnly] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -27,8 +21,8 @@ export const useCustomerDashboard = (): UseCustomerDashboardResult => {
       setError(null);
       try {
         const url = filterAvailableOnly
-          ? 'http://localhost:3001/api/vehicles/available'
-          : 'http://localhost:3001/api/vehicles';
+          ? "http://localhost:3001/api/vehicles/available"
+          : "http://localhost:3001/api/vehicles";
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -37,14 +31,14 @@ export const useCustomerDashboard = (): UseCustomerDashboardResult => {
         const data = await response.json();
         setCars(data);
       } catch (e: any) {
-        setError(e.message || 'An error occurred while fetching cars.');
+        setError(e.message || "An error occurred while fetching cars.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchCars();
-  }, [filterAvailableOnly]); 
+  }, [filterAvailableOnly]);
 
   return {
     cars,

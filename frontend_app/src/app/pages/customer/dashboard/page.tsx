@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
-import { useCustomerDashboard } from '../../../hooks/useCustomerDashboard';
-import { useCustomerProfile } from '../../../hooks/useCustomerProfile';
-import { useMyCars } from '../../../hooks/useMyCars';
-import { useRequestForms } from '../../../hooks/useRequestForm'; 
-import { useMyRequests } from '../../../hooks/useMyRequests';
+import { useCustomerDashboard } from "../../../hooks/customer/useCustomerDashboard";
+import { useCustomerProfile } from "../../../hooks/customer/useCustomerProfile";
+import { useMyCars } from "../../../hooks/customer/useMyCars";
+import { useRequestForms } from "../../../hooks/customer/useRequestForm";
+import { useMyRequests } from "../../../hooks/customer/useMyRequests";
 
-import { AvailableCarsSection } from '../../../components/AvailableCarSection'; 
-import { MyProfileSection } from '../../../components/MyProfileSection';
-import { MyCarsSection } from '../../../components/MyCarsSection';
-import { NewRequestSection } from '../../../components/NewRequestSection';
-import { MyRequestsSection } from '../../../components/MyRequestsSection';
+import { AvailableCarsSection } from "../../../components/customer/AvailableCarSection";
+import { MyProfileSection } from "../../../components/customer/MyProfileSection";
+import { MyCarsSection } from "../../../components/customer/MyCarsSection";
+import { NewRequestSection } from "../../../components/customer/NewRequestSection";
+import { MyRequestsSection } from "../../../components/customer/MyRequestsSection";
 
 /**
  * CustomerDashboardPage component serves as the main dashboard for customers.
@@ -22,9 +22,11 @@ import { MyRequestsSection } from '../../../components/MyRequestsSection';
  */
 
 export default function CustomerDashboardPage() {
-  const [activeSection, setActiveSection] = useState<string>('availableCars');
-  const [activeRequestForm, setActiveRequestForm] = useState<'none' | 'service' | 'inspection' | 'purchase'>('none');
-  const router = useRouter(); 
+  const [activeSection, setActiveSection] = useState<string>("availableCars");
+  const [activeRequestForm, setActiveRequestForm] = useState<
+    "none" | "service" | "inspection" | "purchase"
+  >("none");
+  const router = useRouter();
 
   const customerDashboard = useCustomerDashboard();
   const customerProfile = useCustomerProfile();
@@ -32,35 +34,52 @@ export default function CustomerDashboardPage() {
   const requestForms = useRequestForms();
   const myRequestsHook = useMyRequests();
 
-  const { cars, loading: carsLoading, error: carsError, filterAvailableOnly, setFilterAvailableOnly } = customerDashboard;
   const {
-    profile, loading: profileLoading, error: profileError, editMode, formData, saveLoading, saveError,
-    setEditMode, handleInputChange, handleAddressChange, handleSubmit, resetForm
+    cars,
+    loading: carsLoading,
+    error: carsError,
+    filterAvailableOnly,
+    setFilterAvailableOnly,
+  } = customerDashboard;
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    editMode,
+    formData,
+    saveLoading,
+    saveError,
+    setEditMode,
+    handleInputChange,
+    handleAddressChange,
+    handleSubmit,
+    resetForm,
   } = customerProfile;
   const { myCars, loading: myCarsLoading, error: myCarsError } = myCarsHook;
-  const { closeSuccessPopup, setSelectedVehicleId, resetRequestForm } = requestForms; 
+  const { closeSuccessPopup, setSelectedVehicleId, resetRequestForm } =
+    requestForms;
 
   useEffect(() => {
-    if (activeSection !== 'newRequest') {
-      setActiveRequestForm('none');
+    if (activeSection !== "newRequest") {
+      setActiveRequestForm("none");
       closeSuccessPopup();
     }
-  }, [activeSection, closeSuccessPopup]); 
+  }, [activeSection, closeSuccessPopup]);
 
   useEffect(() => {
-    if (activeSection === 'myRequests') {
-      myRequestsHook.fetchMyRequests(); 
+    if (activeSection === "myRequests") {
+      myRequestsHook.fetchMyRequests();
     }
-  }, [activeSection, myRequestsHook.fetchMyRequests]); 
+  }, [activeSection, myRequestsHook.fetchMyRequests]);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('jwt_token'); 
-    router.push('/'); 
-  }, [router]); 
+    localStorage.removeItem("jwt_token");
+    router.push("/");
+  }, [router]);
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'availableCars':
+      case "availableCars":
         return (
           <AvailableCarsSection
             cars={cars}
@@ -74,7 +93,7 @@ export default function CustomerDashboardPage() {
             resetRequestForm={resetRequestForm}
           />
         );
-      case 'profile':
+      case "profile":
         return (
           <MyProfileSection
             profile={profile}
@@ -91,7 +110,7 @@ export default function CustomerDashboardPage() {
             resetForm={resetForm}
           />
         );
-      case 'myCars':
+      case "myCars":
         return (
           <MyCarsSection
             myCars={myCars}
@@ -99,7 +118,7 @@ export default function CustomerDashboardPage() {
             error={myCarsError}
           />
         );
-      case 'newRequest':
+      case "newRequest":
         return (
           <NewRequestSection
             activeRequestForm={activeRequestForm}
@@ -108,63 +127,67 @@ export default function CustomerDashboardPage() {
             setActiveSection={setActiveSection}
           />
         );
-      case 'myRequests':
-        return (
-          <MyRequestsSection />
-        );
+      case "myRequests":
+        return <MyRequestsSection />;
       default:
         return (
           <div>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">Welcome to the Customer Panel!</h2>
-            <p className="text-gray-600">Select an option from the side menu to begin.</p>
+            <h2 className='text-2xl font-semibold text-gray-700 mb-4'>
+              Welcome to the Customer Panel!
+            </h2>
+            <p className='text-gray-600'>
+              Select an option from the side menu to begin.
+            </p>
           </div>
         );
     }
   };
 
   const menuItems = [
-    { id: 'availableCars', label: 'Browse Cars' },
-    { id: 'profile', label: 'My Profile' },
-    { id: 'myCars', label: 'My Cars' },
-    { id: 'newRequest', label: 'Send New Request' },
-    { id: 'myRequests', label: 'My Requests' },
+    { id: "availableCars", label: "Browse Cars" },
+    { id: "profile", label: "My Profile" },
+    { id: "myCars", label: "My Cars" },
+    { id: "newRequest", label: "Send New Request" },
+    { id: "myRequests", label: "My Requests" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex font-inter">
+    <div className='min-h-screen bg-gray-100 flex font-inter'>
       {/* Sidebar navigation for the customer panel */}
-      <aside className="w-64 bg-purple-700 text-white shadow-lg flex flex-col rounded-r-lg">
-        <div className="p-6 border-b border-purple-600">
-          <h1 className="text-2xl font-bold">Customer Panel</h1>
+      <aside className='w-64 bg-purple-700 text-white shadow-lg flex flex-col rounded-r-lg'>
+        <div className='p-6 border-b border-purple-600'>
+          <h1 className='text-2xl font-bold'>Customer Panel</h1>
         </div>
-        <nav className="flex-grow p-6">
+        <nav className='flex-grow p-6'>
           <ul>
             {menuItems.map((item) => (
-              <li key={item.id} className="mb-3">
+              <li key={item.id} className='mb-3'>
                 <button
                   onClick={() => setActiveSection(item.id)}
                   className={`block w-full text-left py-2 px-4 rounded-md transition duration-200
-                    ${activeSection === item.id ? 'bg-purple-800 font-semibold shadow-md' : 'hover:bg-purple-600'}`}
-                >
+                    ${
+                      activeSection === item.id
+                        ? "bg-purple-800 font-semibold shadow-md"
+                        : "hover:bg-purple-600"
+                    }`}>
                   {item.label}
                 </button>
               </li>
             ))}
           </ul>
         </nav>
-        <div className="p-6 border-t border-purple-600 mt-auto">
+        <div className='p-6 border-t border-purple-600 mt-auto'>
           <button
             onClick={handleLogout}
-            className="block text-center bg-purple-600 hover:bg-purple-500 py-2 px-4 rounded-md transition duration-200 w-full shadow-md"
-          >
+            className='block text-center bg-purple-600 hover:bg-purple-500 py-2 px-4 rounded-md transition duration-200 w-full shadow-md'>
             Logout
           </button>
         </div>
       </aside>
 
       {/* Main content area */}
-      <main className="flex-grow p-8 bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-xl min-h-[calc(100vh-64px)]">
+      <main className='flex-grow p-8 bg-gray-100'>
+        <div className='bg-white p-8 rounded-lg shadow-xl min-h-[calc(100vh-64px)]'>
           {renderContent()}
         </div>
       </main>

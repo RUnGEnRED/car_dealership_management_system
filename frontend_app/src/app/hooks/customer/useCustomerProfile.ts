@@ -1,28 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { CustomerProfile, CustomerProfileFormData, CustomerProfileUpdate } from '../types/customer'; 
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import {
+  CustomerProfile,
+  CustomerProfileFormData,
+  CustomerProfileUpdate,
+} from "../../types/customer";
+import { UseCustomerProfileResult } from "../../types/useCustomerProfileResult";
 
 /**
  * Custom hook to manage customer profile data.
  * It handles fetching, updating, and editing the customer's profile.
  */
 
-interface UseCustomerProfileResult {
-  profile: CustomerProfile | null;
-  loading: boolean;
-  error: string | null;
-  editMode: boolean;
-  formData: CustomerProfileFormData;
-  saveLoading: boolean;
-  saveError: string | null;
-  setEditMode: (mode: boolean) => void;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; 
-  handleAddressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (e: React.FormEvent) => void;
-  resetForm: () => void;
-}
-
-const CUSTOMER_PROFILE_URL = 'http://localhost:3001/api/customers/me';
+const CUSTOMER_PROFILE_URL = "http://localhost:3001/api/customers/me";
 
 export const useCustomerProfile = (): UseCustomerProfileResult => {
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
@@ -30,24 +20,24 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
   const [error, setError] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [formData, setFormData] = useState<CustomerProfileFormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
     address: {
-      street: '',
-      city: '',
-      postalCode: '',
-      country: '',
+      street: "",
+      city: "",
+      postalCode: "",
+      country: "",
     },
   });
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const getAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem('jwt_token');
+    const token = localStorage.getItem("jwt_token");
     if (!token) {
-      setError('Authentication token not found. Please log in again.');
+      setError("Authentication token not found. Please log in again.");
       return {};
     }
     return {
@@ -61,7 +51,10 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get<CustomerProfile>(CUSTOMER_PROFILE_URL, getAuthHeaders());
+      const response = await axios.get<CustomerProfile>(
+        CUSTOMER_PROFILE_URL,
+        getAuthHeaders()
+      );
       setProfile(response.data);
       setFormData({
         firstName: response.data.firstName,
@@ -69,19 +62,23 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
         email: response.data.email,
         phoneNumber: response.data.phoneNumber,
         address: {
-          street: response.data.address.street || '',
-          city: response.data.address.city || '',
-          postalCode: response.data.address.postalCode || '',
-          country: response.data.address.country || '',
+          street: response.data.address.street || "",
+          city: response.data.address.city || "",
+          postalCode: response.data.address.postalCode || "",
+          country: response.data.address.country || "",
         },
       });
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response && err.response.status === 401) {
-        setError('Unauthorized. Please log in again.');
+      if (
+        axios.isAxiosError(err) &&
+        err.response &&
+        err.response.status === 401
+      ) {
+        setError("Unauthorized. Please log in again.");
       } else {
-        setError(err.message || 'Failed to fetch profile data.');
+        setError(err.message || "Failed to fetch profile data.");
       }
-      console.error('Fetch profile error:', err);
+      console.error("Fetch profile error:", err);
     } finally {
       setLoading(false);
     }
@@ -91,24 +88,30 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
     fetchProfile();
   }, [fetchProfile]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { 
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      address: {
-        ...prevData.address,
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
         [name]: value,
-      },
-    }));
-  }, []);
+      }));
+    },
+    []
+  );
+
+  const handleAddressChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        address: {
+          ...prevData.address,
+          [name]: value,
+        },
+      }));
+    },
+    []
+  );
 
   const resetForm = useCallback(() => {
     if (profile) {
@@ -118,10 +121,10 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
         email: profile.email,
         phoneNumber: profile.phoneNumber,
         address: {
-          street: profile.address.street || '',
-          city: profile.address.city || '',
-          postalCode: profile.address.postalCode || '',
-          country: profile.address.country || '',
+          street: profile.address.street || "",
+          city: profile.address.city || "",
+          postalCode: profile.address.postalCode || "",
+          country: profile.address.country || "",
         },
       });
     }
@@ -150,14 +153,19 @@ export const useCustomerProfile = (): UseCustomerProfileResult => {
         await axios.put(CUSTOMER_PROFILE_URL, payload, getAuthHeaders());
         setSaveLoading(false);
         setEditMode(false);
-        fetchProfile(); 
+        fetchProfile();
       } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response && err.response.data && err.response.data.message) {
+        if (
+          axios.isAxiosError(err) &&
+          err.response &&
+          err.response.data &&
+          err.response.data.message
+        ) {
           setSaveError(err.response.data.message);
         } else {
-          setSaveError(err.message || 'Failed to save profile changes.');
+          setSaveError(err.message || "Failed to save profile changes.");
         }
-        console.error('Save profile error:', err);
+        console.error("Save profile error:", err);
         setSaveLoading(false);
       }
     },
