@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Car } from "../../types/car";
-import { UseCustomerDashboardResult } from "../../types/newRequestSection";
+import { UseCustomerDashboardResult } from "../../types/customer/newRequestSection";
 
 /**
  * This hook manages fetching and filtering car data for the customer dashboard.
