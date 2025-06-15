@@ -2,37 +2,17 @@
 
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { useEmployeeProfile } from '../../../hooks/employee/useEmployeeProfile';
 import { useEmployeeDashboard } from '../../../hooks/employee/useEmployeeDashboard';
 import { useEmployeeRequests } from '../../../hooks/employee/useEmployeeRequests';
-
-import { MyProfileSection } from '../../../components/employee/MyProfileSection';
+import { MyProfileSection } from '../../../components/employee/MyProfileSection'; 
 import { ManageVehiclesSection } from '../../../components/employee/ManageVehiclesSection';
 import { ManageCustomersSection } from '../../../components/employee/ManageCustomersSection';
 import { ClientRequestsSection } from '../../../components/employee/ClientRequestsSection';
 
 
 export default function EmployeeDashboardPage() {
-  const [activeSection, setActiveSection] = useState<string>('manageVehicles'); 
-
+  const [activeSection, setActiveSection] = useState<string>('manageVehicles');
   const router = useRouter();
-
-  const {
-    profile,
-    loading: employeeProfileLoading,
-    error: employeeProfileError,
-    editMode: editEmployeeProfileMode,
-    formData: employeeProfileFormData,
-    saveLoading: employeeProfileSaveLoading,
-    saveError: employeeProfileSaveError,
-    setEditMode: setEditEmployeeProfileMode,
-    handleInputChange: handleEmployeeProfileInputChange,
-    handleAddressChange: handleEmployeeProfileAddressChange,
-    handleSubmit: handleEmployeeProfileSubmit,
-    resetForm: resetEmployeeProfileForm,
-    fetchEmployeeProfile
-  } = useEmployeeProfile();
 
   const {
     vehicles,
@@ -55,8 +35,8 @@ export default function EmployeeDashboardPage() {
   } = useEmployeeRequests();
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('jwt_token'); 
-    router.push('/'); 
+    localStorage.removeItem('jwt_token');
+    router.push('/');
   }, [router]);
 
   const renderContent = () => {
@@ -67,14 +47,14 @@ export default function EmployeeDashboardPage() {
             vehicles={vehicles}
             loading={loadingVehicles}
             error={errorVehicles}
-            fetchVehicles={fetchVehicles} 
+            fetchVehicles={fetchVehicles}
           />
         );
       case 'manageCustomers':
         return (
           <ManageCustomersSection
             customers={customers}
-            vehicles={vehicles} 
+            vehicles={vehicles}
             loadingCustomers={loadingCustomers}
             errorCustomers={errorCustomers}
             loadingVehicles={loadingVehicles}
@@ -96,7 +76,7 @@ export default function EmployeeDashboardPage() {
         );
       case 'employeeProfile':
         return (
-          <MyProfileSection /> 
+          <MyProfileSection />
         );
       default:
         return (
@@ -117,8 +97,10 @@ export default function EmployeeDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex font-inter">
-      {/* Sidebar navigation */}
-      <aside className="w-64 bg-purple-700 text-white shadow-lg flex flex-col rounded-r-lg">
+      <aside
+        className="bg-purple-700 text-white shadow-lg flex flex-col rounded-r-lg"
+        style={{ width: 260, minWidth: 260, maxWidth: 260 }}
+      >
         <div className="p-6 border-b border-purple-600">
           <h1 className="text-2xl font-bold">Employee Panel</h1>
         </div>
@@ -149,7 +131,6 @@ export default function EmployeeDashboardPage() {
         </div>
       </aside>
 
-      {/* Main content area */}
       <main className="flex-grow p-8 bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-xl min-h-[calc(100vh-64px)]">
           {renderContent()}

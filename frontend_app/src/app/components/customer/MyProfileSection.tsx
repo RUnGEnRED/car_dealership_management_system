@@ -3,7 +3,7 @@ import {
   CustomerProfile,
   CustomerProfileFormData,
   MyProfileSectionProps,
-} from "../../types/customer";
+} from "../../types/customer/customer";
 
 /**
  * Component props for MyProfileSection.

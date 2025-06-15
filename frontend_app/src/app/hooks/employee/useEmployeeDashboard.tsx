@@ -16,6 +16,8 @@ interface UseEmployeeDashboardResult {
 
 const ALL_VEHICLES_URL = 'http://localhost:3001/api/vehicles';
 const ALL_CUSTOMERS_URL = 'http://localhost:3001/api/customers';
+const CUSTOMER_BY_ID_URL = (id: string | number) => `http://localhost:3001/api/customers/${id}`;
+const CUSTOMER_VEHICLES_URL = (id: string | number) => `http://localhost:3001/api/customers/${id}/vehicles`;
 
 
 export const useEmployeeDashboard = (): UseEmployeeDashboardResult => {
